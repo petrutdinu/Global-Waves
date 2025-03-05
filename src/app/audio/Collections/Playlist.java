@@ -117,8 +117,8 @@ public final class Playlist extends AudioCollection {
     @Override
     public boolean isVisibleToUser(final String user) {
         return this.getVisibility() == Enums.Visibility.PUBLIC
-               || (this.getVisibility() == Enums.Visibility.PRIVATE
-                   && this.getOwner().equals(user));
+                || (this.getVisibility() == Enums.Visibility.PRIVATE
+                && this.getOwner().equals(user));
     }
 
     @Override
@@ -134,5 +134,10 @@ public final class Playlist extends AudioCollection {
         } else {
             return count == Integer.parseInt(query);
         }
+    }
+
+    @Override
+    public boolean containsTrack(final AudioFile track) {
+        return songs.contains(track);
     }
 }

@@ -16,6 +16,7 @@ public final class Player {
     private Enums.RepeatMode repeatMode;
     private boolean shuffle;
     private boolean paused;
+    @Getter
     private PlayerSource source;
     @Getter
     private String type;
@@ -50,8 +51,8 @@ public final class Player {
         if (source != null && source.getAudioFile() != null) {
             PodcastBookmark currentBookmark =
                     new PodcastBookmark(source.getAudioCollection().getName(),
-                                        source.getIndex(),
-                                        source.getDuration());
+                            source.getIndex(),
+                            source.getDuration());
             bookmarks.removeIf(bookmark -> bookmark.getName().equals(currentBookmark.getName()));
             bookmarks.add(currentBookmark);
         }
@@ -74,6 +75,8 @@ public final class Player {
             return new PlayerSource(Enums.PlayerSourceType.PLAYLIST, (AudioCollection) entry);
         } else if ("podcast".equals(type)) {
             return createPodcastSource((AudioCollection) entry, bookmarks);
+        } else if ("album".equals(type)) {
+            return new PlayerSource(Enums.PlayerSourceType.ALBUM, (AudioCollection) entry);
         }
 
         return null;
@@ -92,8 +95,8 @@ public final class Player {
     /**
      * Sets source.
      *
-     * @param entry the entry
-     * @param sourceType  the sourceType
+     * @param entry      the entry
+     * @param sourceType the sourceType
      */
     public void setSource(final LibraryEntry entry, final String sourceType) {
         if ("podcast".equals(this.type)) {
@@ -124,7 +127,8 @@ public final class Player {
             source.generateShuffleOrder(seed);
         }
 
-        if (source.getType() == Enums.PlayerSourceType.PLAYLIST) {
+        if (source.getType() == Enums.PlayerSourceType.PLAYLIST
+                || source.getType() == Enums.PlayerSourceType.ALBUM) {
             shuffle = !shuffle;
             if (shuffle) {
                 source.updateShuffleIndex();
@@ -235,6 +239,18 @@ public final class Player {
             return null;
         }
         return source.getAudioFile();
+    }
+
+    /**
+     * Gets current audio collection.
+     *
+     * @return the current audio collection
+     */
+    public AudioCollection getCurrentAudioCollection() {
+        if (source == null) {
+            return null;
+        }
+        return source.getAudioCollection();
     }
 
     /**
